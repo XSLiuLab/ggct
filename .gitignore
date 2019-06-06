@@ -1,0 +1,7 @@
+data/
+HiSeqV2*
+.Rproj.user/
+.Rhistory
+Gistic2_CopyNumber_Gistic2_all_data_by_genes*
+Gistic2_CopyNumber_Gistic2_all_thresholded.by_genes*
+LUAD_clinicalMatrix.gz
