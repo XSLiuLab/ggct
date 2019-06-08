@@ -8,10 +8,14 @@ mut_query = XenaData %>%
 luad_mut = XenaPrepare(mut_query)
 luad_mut$sample[grepl("KRAS", luad_mut$sample)]        
 
+
+
 kras_status = luad_mut %>% 
   filter(sample == "KRAS") %>% 
   tidyr::gather(barcodes, status, -sample) %>% 
   select(-sample)
+
+save(kras_status, file="kras_status.RData")
 
 luad_expr = XenaPrepare('HiSeqV2')
 ggct_expr = luad_expr %>% 

@@ -1,0 +1,16 @@
+Project,group1,group2,p,p.adj,p.format,p.signif,method
+BLCA,Primary Tumor,Solid Tissue Normal,1.0150372607246441e-5,4.1e-5,1.0e-05,****,T-test
+UCEC,Primary Tumor,Solid Tissue Normal,2.2775256775897764e-21,2.3e-20,< 2e-16,****,T-test
+HNSC,Primary Tumor,Solid Tissue Normal,0.001241004413632874,0.0025,0.0012,**,T-test
+PRAD,Primary Tumor,Solid Tissue Normal,2.4006545209703463e-14,1.7e-13,2.4e-14,****,T-test
+KIRP,Primary Tumor,Solid Tissue Normal,3.3798766789378145e-6,1.7e-5,3.4e-06,****,T-test
+COAD,Primary Tumor,Solid Tissue Normal,2.642417291219918e-30,2.8999999999999997e-29,< 2e-16,****,T-test
+LUSC,Primary Tumor,Solid Tissue Normal,2.5287731386976397e-58,3.5e-57,< 2e-16,****,T-test
+KIRC,Primary Tumor,Solid Tissue Normal,1.4936547667627497e-16,1.3e-15,< 2e-16,****,T-test
+LIHC,Primary Tumor,Solid Tissue Normal,1.5983794449845987e-15,1.3e-14,1.6e-15,****,T-test
+BRCA,Primary Tumor,Solid Tissue Normal,2.2162392819070537e-53,2.7e-52,< 2e-16,****,T-test
+KICH,Primary Tumor,Solid Tissue Normal,0.03530496816811393,0.035,0.0353,*,T-test
+THCA,Primary Tumor,Solid Tissue Normal,6.412874031467641e-63,9.6e-62,< 2e-16,****,T-test
+LUAD,Primary Tumor,Solid Tissue Normal,8.539036133799033e-58,1.0999999999999998e-56,< 2e-16,****,T-test
+ESCA,Primary Tumor,Solid Tissue Normal,4.5649036513924625e-5,1.4e-4,4.6e-05,****,T-test
+STAD,Primary Tumor,Solid Tissue Normal,6.877747924360086e-11,4.1e-10,6.9e-11,****,T-test

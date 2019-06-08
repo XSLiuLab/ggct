@@ -84,11 +84,21 @@ df.ggct = purrr::reduce(list(
   TCGA_Clinical[, c("Project", "sampleID", "sample_type")]
 ), dplyr::full_join)
 
+save(df.ggct, file = "tcga_ggct.RData")
+
 library(ggpubr)
 
+# all projects
 ggboxplot(filter(df.ggct, !is.na(Project), !is.na(expr)), x = "Project", y = "expr", 
           color="sample_type", xlab = FALSE, ylab = "GGCT expression (log2 based)") +
   rotate_x_text(angle = 45)
+
+ggdotplot(filter(df.ggct, !is.na(Project), !is.na(copynumber)), x = "Project", y = "copynumber", 
+          color="Project", xlab = FALSE,
+          ylab = "GGCT copy number ratio (log2 based)", legend="none", binwidth = 0.005) +
+  rotate_x_text(angle = 45)  + 
+  geom_hline(size=0.2, yintercept = 0, linetype=2)
+
 
 # Filter project which has no enough x observations
 
@@ -107,21 +117,23 @@ setdiff(unique(df.ggct$Project), valid_projects)
 table(df.ggct[!is.na(df.ggct$expr), ]$sample_type, df.ggct[!is.na(df.ggct$expr), ]$Project)
 
 
+#df.ggct2 = df.ggct %>% filter(Project %in% c(valid_projects, "KIRC"))
 df.ggct2 = df.ggct %>% filter(Project %in% valid_projects)
-
 # for (i in valid_projects) {
 #   print(i)
 #   t.test(expr ~ sample_type, data = df.ggct2[df.ggct2$Project==i,])
 # }
 
-compare_means(expr ~ sample_type, data = df.ggct2, group.by = "Project")
+tt = compare_means(expr ~ sample_type, data = df.ggct2, group.by = "Project", method = "t.test")
+readr::write_csv(tt[,-2], path = "GGCT_expression_comparison_15_cancers.csv")
 
-p_expr= ggboxplot(df.ggct2, x = "Project", y = "expr", 
+
+p_expr= ggboxplot(filter(df.ggct2,!is.na(expr)), x = "Project", y = "expr", 
           color="sample_type", xlab = FALSE, ylab = "GGCT expression (log2 based)") +
   rotate_x_text(angle = 45) +
   stat_compare_means(aes(group=sample_type), label="p.signif", method="t.test")
 
-p_cnv = ggdotplot(df.ggct2, x = "Project", y = "copynumber", 
+p_cnv = ggdotplot(filter(df.ggct2,!is.na(copynumber)), x = "Project", y = "copynumber", 
           color="Project", xlab = FALSE,
           ylab = "GGCT copy number ratio (log2 based)", legend="none", binwidth = 0.005) +
   rotate_x_text(angle = 45)  + 
@@ -138,6 +150,32 @@ load("./ggct_survival_data_on_metastasis_and_stages.Rdata")
 library(survival)
 library(survminer)
 
+ttttt <- left_join(ggct_on_stages[, c("samples", "expression", "cnv", "OS", "OS_IND")], 
+                   TCGA_Clinical[, c("sampleID", "pathologic_stage")], by=c("samples"="sampleID"))
+ttttt$classes = ifelse(ttttt$pathologic_stage %in% c("Stage I", "Stage IA", "Stage IB"), "Early", 
+                       ifelse(ttttt$pathologic_stage %in% c("Stage IIIA", "Stage IIIB", "Stage IV"), "Late", NA))
+
+table(ttttt$classes)
+
+
+th = 0.20
+ttttt %>% 
+  filter(!is.na(classes)) %>% 
+  mutate(L = quantile(expression, th),
+         H = quantile(expression, 1-th)) %>% 
+  filter(OS <3000 & !is.na(OS) & !is.na(OS_IND)) %>% 
+  group_by(classes) %>% 
+    summarise(N_L = sum(expression<=L), N_H=sum(expression>=H))
+  
+
+coxph(Surv(OS, OS_IND) ~ expression, data = ttttt %>% filter(classes=="Early"))
+coxph(Surv(OS, OS_IND) ~ expression, data = ttttt %>% filter(classes=="Late"))
+
+coxph(Surv(OS, OS_IND) ~ cnv, data = ttttt %>% filter(classes=="Early"))
+coxph(Surv(OS, OS_IND) ~ cnv, data = ttttt %>% filter(classes=="Late"))
+
+
+## ggct_on_stages这个分类数据有问题
 ggscatter(ggct_on_stages, x = "cnv", y="expression", add="reg.line", 
           xlab="GGCT copy number ratio (log2 based)", ylab = "GGCT expression (log2 based)") +
   stat_cor(
