@@ -209,3 +209,7 @@ ggerrorplot(ggct_on_stages, x="classes", y="cnv",
             add = "violin", add.params = list(color = "darkgray")) + 
   stat_compare_means(comparisons = list(c("early_stage", "late_stage")), method = "t.test", label = "p.signif")
 
+# Since GGCT is supposed to be upregulated by RAS signaling, 
+# does GGCT mRNA and CNV levels increase when the dataset is stratified for
+# RAS mutant cancers and does this have an effect on survival in either cancer stage? 
+# The authors should do this analysis and show that data.
