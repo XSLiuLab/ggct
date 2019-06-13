@@ -250,6 +250,7 @@ df_plus = df %>%
     )
   )
 
+
 ggboxplot(df_plus, x="status", y = "expr", facet.by = "CNV_status", 
           xlab = "KRAS mutation status", ylab = "GGCT expression (log2 based)",
           palette = "jco") +
@@ -260,7 +261,19 @@ ggboxplot(df_plus, x="CNV_status", y = "expr",
           palette = "jco") +
   stat_compare_means(method="anova")
 
+# 不同GGCT CNV状态下，KRAS突变的比例
 
+
+
+ggplot(df_plus, aes( x=CNV_status, fill=factor(status))) +
+  geom_bar(position="fill") + cowplot::theme_cowplot() + 
+  theme(axis.title.x = element_blank(), legend.position = "top") + 
+  labs(y="Ratio", fill="KRAS mutation status") + 
+  scale_fill_manual(values=c("lightblue", "red"))
+
+tb = table(df_plus$CNV_status, df_plus$status)  
+fisher.test(tb)
+  
 library(survival)
 library(survminer)
 
