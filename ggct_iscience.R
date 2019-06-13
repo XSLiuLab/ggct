@@ -241,6 +241,26 @@ p2 = ggboxplot(df, x="status", y = "expr",
 
 cowplot::plot_grid(p1, p2)
 
+df_plus = df %>% 
+  mutate(
+    CNV_status = case_when(
+      copynumber_threshold > 0 ~ "GGCT Amplification", 
+      copynumber_threshold == 0 ~ "GGCT Normal",
+      copynumber_threshold <0 ~ "GGCT Deletion"
+    )
+  )
+
+ggboxplot(df_plus, x="status", y = "expr", facet.by = "CNV_status", 
+          xlab = "KRAS mutation status", ylab = "GGCT expression (log2 based)",
+          palette = "jco") +
+  stat_compare_means(comparisons = list(c("0", "1")))
+
+ggboxplot(df_plus, x="CNV_status", y = "expr",
+          xlab = FALSE, ylab = "GGCT expression (log2 based)",
+          palette = "jco") +
+  stat_compare_means(method="anova")
+
+
 library(survival)
 library(survminer)
 
