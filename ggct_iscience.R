@@ -308,3 +308,32 @@ ggsurvplot_facet(fit, df2, pval = TRUE, facet.by = c("Stage", "KRAS_Status"), pa
 fit = survfit(Surv(OS.time, OS) ~ cp_status, data = df2)
 ggsurvplot_facet(fit, df2, pval = TRUE, facet.by = c("Stage", "KRAS_Status"), palette = "jco")
 
+#-- 比较有KRAS的突变的cancer与正常组织样本GGCT表达差异
+library(dplyr)
+new_data = 
+  df.ggct %>% left_join(kras_status, by = c("sampleID"="barcodes")) %>% 
+  filter(sampleID %in% cli_list$TCGA.LUAD.sampleMap__LUAD_clinicalMatrix.gz$sampleID) %>% 
+  filter(!is.na(status) | sample_type == "Solid Tissue Normal") %>% 
+  mutate(status = ifelse(is.na(status), 0, status),
+         CNV_status = case_when(
+           copynumber_threshold > 0 ~ "GGCT Amplification",
+           copynumber_threshold == 0 | sample_type == "Solid Tissue Normal" ~ "GGCT Normal",
+           copynumber_threshold <0 ~ "GGCT Deletion"
+         )) 
+
+library(ggpubr)
+ggboxplot(new_data, x="status", y = "expr", 
+          xlab = "KRAS mutation status", ylab = "GGCT expression (log2 based)",
+          palette = "jco") +
+  stat_compare_means(comparisons = list(c("0", "1")), method = "t.test")
+
+ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0)), x="status", y = "expr", 
+          xlab = "KRAS mutation status", ylab = "GGCT expression (log2 based)",
+          palette = "jco") +
+  stat_compare_means(comparisons = list(c("0", "1")), method = "t.test")
+
+ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0)), x="status", y = "expr",
+          facet.by = "CNV_status",
+          xlab = "KRAS mutation status", ylab = "GGCT expression (log2 based)",
+          palette = "jco") +
+  stat_compare_means(comparisons = list(c("0", "1")), method = "t.test")
