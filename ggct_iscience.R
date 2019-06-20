@@ -139,6 +139,17 @@ p_cnv = ggdotplot(filter(df.ggct2,!is.na(copynumber)), x = "Project", y = "copyn
   rotate_x_text(angle = 45)  + 
   geom_hline(size=0.2, yintercept = 0, linetype=2)
 
+ggboxplot(filter(df.ggct2,!is.na(copynumber)), x = "Project", y = "copynumber", 
+          color="Project", xlab = FALSE,
+          ylab = "GGCT copy number ratio (log2 based)", legend="none") +
+  rotate_x_text(angle = 45)  + 
+  geom_hline(size=0.2, yintercept = 0, linetype=2)
+
+p_cnv = ggerrorplot(filter(df.ggct2,!is.na(copynumber)), x = "Project", y = "copynumber", 
+          color="Project", xlab = FALSE,
+          ylab = "GGCT copy number ratio (log2 based)", legend="none") +
+  rotate_x_text(angle = 45)  + 
+  geom_hline(size=0.2, yintercept = 0, linetype=2)
 
 library(patchwork)
 library(cowplot)
@@ -334,6 +345,12 @@ ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0)), x="s
 
 ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0)), x="status", y = "expr",
           facet.by = "CNV_status",
+          xlab = "KRAS mutation status", ylab = "GGCT expression (log2 based)",
+          palette = "jco") +
+  stat_compare_means(comparisons = list(c("0", "1")), method = "t.test")
+
+ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0) & CNV_status == "GGCT Normal"), 
+          x="status", y = "expr",
           xlab = "KRAS mutation status", ylab = "GGCT expression (log2 based)",
           palette = "jco") +
   stat_compare_means(comparisons = list(c("0", "1")), method = "t.test")
