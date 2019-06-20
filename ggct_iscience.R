@@ -355,6 +355,5 @@ p3 = ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0) &
           palette = "jco") +
   stat_compare_means(comparisons = list(c("0", "1")), method = "t.test")
 
-cowplot::plot_grid(p1 + cowplot:theme_cowplot(font_size = 20), 
-                   p2 + cowplot:theme_cowplot(font_size = 20), 
-                   p3 + cowplot:theme_cowplot(font_size = 20), ncol = 3, align = "hv") 
+
+cowplot::plot_grid(p1, p2, p3, ncol = 3, align = "hv")
