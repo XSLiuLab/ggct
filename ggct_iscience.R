@@ -277,10 +277,10 @@ ggboxplot(df_plus, x="CNV_status", y = "expr",
 
 
 ggplot(df_plus, aes( x=CNV_status, fill=factor(status))) +
-  geom_bar(position="fill") + cowplot::theme_cowplot() + 
+  geom_bar(position="fill") + cowplot::theme_cowplot(font_size = 20) + 
   theme(axis.title.x = element_blank(), legend.position = "top") + 
   labs(y="Ratio", fill="KRAS mutation status") + 
-  scale_fill_manual(values=c("lightblue", "red"))
+  scale_fill_manual(values=c("lightblue", "red")) +rotate_x_text(45)
 
 tb = table(df_plus$CNV_status, df_plus$status)  
 fisher.test(tb)
@@ -349,8 +349,12 @@ ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0)), x="s
           palette = "jco") +
   stat_compare_means(comparisons = list(c("0", "1")), method = "t.test")
 
-ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0) & CNV_status == "GGCT Normal"), 
+p3 = ggboxplot(subset(new_data, !(sample_type =="Primary Tumor" & status == 0) & CNV_status == "GGCT Normal"), 
           x="status", y = "expr",
           xlab = "KRAS mutation status", ylab = "GGCT expression (log2 based)",
           palette = "jco") +
   stat_compare_means(comparisons = list(c("0", "1")), method = "t.test")
+
+cowplot::plot_grid(p1 + cowplot:theme_cowplot(font_size = 20), 
+                   p2 + cowplot:theme_cowplot(font_size = 20), 
+                   p3 + cowplot:theme_cowplot(font_size = 20), ncol = 3, align = "hv") 
